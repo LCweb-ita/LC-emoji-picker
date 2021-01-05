@@ -1,6 +1,6 @@
 # Emoji picker created with vanilla javascript
 
-**Pure javascript** plugin attaching an full-featured emoji picker to text inputs and textareas!
+**Pure javascript** plugin attaching a full-featured emoji picker to text inputs and textareas!
 
 ![](picker_preview.png)
 
@@ -13,7 +13,9 @@
 3. by default it will fetch emoji-list.min.js from the Github repository, it's recommended to upload it on your server and set *emoji_json_url* option
 
 ```
+<script type="text/javascript>
 new lc_emoji_picker('textarea, input');
+</script>
 ```
 
 ## Options
@@ -22,6 +24,7 @@ Here are listed available options with default values
 
 
 ```
+<script type="text/javascript>
 new lc_emoji_picker('textarea, input', {
 
     // (string) html code injected as picker trigger  
@@ -43,6 +46,7 @@ new lc_emoji_picker('textarea, input', {
     // (function) triggered as soon as an emoji is selected. Passes emoji and target field objects as parameters
     selection_callback  : null, // function(emoji, target_field) {},
 });
+</script>
 ```
 
 
