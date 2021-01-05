@@ -2,7 +2,7 @@
 
 **Pure javascript** plugin attaching an full-featured emoji picker to text inputs and textareas!
 
-![](preview.png)
+![](picker_preview.png)
 
 ## Installation & Usage
 
