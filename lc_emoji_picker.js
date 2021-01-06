@@ -1,6 +1,6 @@
 /**
  * lc_emoji_picker.js - Fancy emoji picker for text inputs and textareas
- * Version: 1.0
+ * Version: 1.0.1
  * Author: Luca Montanari aka LCweb
  * Website: https://lcweb.it
  * Licensed under the MIT license
@@ -60,7 +60,23 @@
         // close if clicked elementis not in the picker
         if(!picker.contains(e.target) && !e.target.classList.contains('lcep-shown')) {
             picker.classList.remove('lcep-shown');
+            active_trigger = null;
         }
+        return true;
+    });
+    
+    
+    /* hide picker on screen resizing */
+    window.addEventListener('resize', function(e) {
+        const picker = document.querySelector("#lc-emoji-picker.lcep-shown");
+        if(!picker) {
+            return true;    
+        }
+        
+        // close if clicked elementis not in the picker
+        picker.classList.remove('lcep-shown');
+        active_trigger = null;
+        
         return true;
     });
     
@@ -212,11 +228,18 @@
             this.reset_picker();
             active_trigger = trigger;
                          
-            const   at_offsety = active_trigger.getBoundingClientRect(),
-                    at_h = parseInt(active_trigger.clientHeight, 10),
-                    y_pos = (parseInt(at_offsety.y, 10) + parseInt(window.pageYOffset, 10) + at_h + 5);
+            const   picker_w    = picker.offsetWidth,
+                    at_offsety  = active_trigger.getBoundingClientRect(),
+                    at_h        = parseInt(active_trigger.clientHeight, 10),
+                    y_pos       = (parseInt(at_offsety.y, 10) + parseInt(window.pageYOffset, 10) + at_h + 5);
 
-            picker.setAttribute('style', 'top: '+ y_pos +'px; left: '+ (parseInt(at_offsety.right, 10) - 280) +'px;');
+            // left pos control - also checking side overflows
+            let left = (parseInt(at_offsety.right, 10) - picker_w);
+            if(left < 0) {
+                left = 0;
+            }
+            
+            picker.setAttribute('style', 'top: '+ y_pos +'px; left: '+ left +'px;');
             picker.classList.add('lcep-shown');
         };
         
@@ -403,6 +426,7 @@
                     z-index: -100;
                     opacity: 0;
                     position: absolute;
+                    top: -9999px;
                     z-index: 999;
                     width: 280px;
                     min-height: 320px;

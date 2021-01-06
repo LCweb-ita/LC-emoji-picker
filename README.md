@@ -1,6 +1,6 @@
-# Emoji picker created with vanilla javascript
+# Pure javascript emoji picker by LCweb
 
-**Pure javascript** plugin attaching a full-featured emoji picker to text inputs and textareas!
+No dependencies **javascript plugin** attaching a full-featured emoji picker to text inputs and textareas!
 
 ![](picker_preview.png)
 
