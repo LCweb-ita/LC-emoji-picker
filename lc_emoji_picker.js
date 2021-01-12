@@ -1,6 +1,6 @@
 /**
  * lc_emoji_picker.js - Fancy emoji picker for text inputs and textareas
- * Version: 1.0.1
+ * Version: 1.0.2
  * Author: Luca Montanari aka LCweb
  * Website: https://lcweb.it
  * Licensed under the MIT license
@@ -248,7 +248,10 @@
         /* select emoji and insert it in the field */
         this.emoji_select = function(emoji) {
             const field = active_trigger.parentNode.querySelector('input, textarea');
-            field.value = field.value + emoji.innerText;
+            
+            // wordpress implementations fix (auto injecting emoji images into selectors)
+            const true_emoji = (emoji.getElementsByTagName('IMG').length) ? emoji.getElementsByTagName('IMG')[0].getAttribute('alt') : emoji.innerText;     
+            field.value = field.value + true_emoji;
             
             if(typeof(options.selection_callback) == 'function') {
                 options.selection_callback.call(this, emoji, field);    
@@ -582,16 +585,9 @@
                 .lcep-search:not(.lcep-searching) i {
                     display: none;
                 }
-                .lcep-footer {
-                    display: flex;
-                    flex-wrap: wrap;
-                    align-items: center;
-                    height: 50px;
-                    padding: 0 15px 15px 15px;
-                }
-                .lcep-footer-icon {
-                    font-size: 30px;
-                    margin-right: 8px;
+                #lc-emoji-picker img.emoji {
+                    min-width: 23px;
+                    height: auto !important;
                 }
             </style>`);
         };
