@@ -1,6 +1,6 @@
 /**
  * lc_emoji_picker.js - Fancy emoji picker for text inputs and textareas
- * Version: 1.0.2
+ * Version: 1.0.3
  * Author: Luca Montanari aka LCweb
  * Website: https://lcweb.it
  * Licensed under the MIT license
@@ -11,10 +11,11 @@
 	"use strict";
       
     /*** vars ***/
-    let emoji_json      = null;
-    let style_generated = null;
-    let active_trigger  = null;
-    let cat_waypoints   = {};
+    let emoji_json      = null,
+        window_width    = null,
+        style_generated = null,
+        active_trigger  = null,
+        cat_waypoints   = {};
     
     const category_icons = {
         "smileys--people" : "😀", 
@@ -69,7 +70,7 @@
     /* hide picker on screen resizing */
     window.addEventListener('resize', function(e) {
         const picker = document.querySelector("#lc-emoji-picker.lcep-shown");
-        if(!picker) {
+        if(!picker || window_width == window.innerWidth) {
             return true;    
         }
         
@@ -218,7 +219,8 @@
         /* show picker */
         this.show_picker = function(trigger) {
             const picker = document.getElementById('lc-emoji-picker');
-
+            window_width = window.innerWidth;
+            
             if(trigger == active_trigger) {
                 picker.classList.remove('lcep-shown');
                 active_trigger = null;
@@ -229,6 +231,7 @@
             active_trigger = trigger;
                          
             const   picker_w    = picker.offsetWidth,
+                    picker_h    = picker.offsetHeight,
                     at_offsety  = active_trigger.getBoundingClientRect(),
                     at_h        = parseInt(active_trigger.clientHeight, 10),
                     y_pos       = (parseInt(at_offsety.y, 10) + parseInt(window.pageYOffset, 10) + at_h + 5);
@@ -239,7 +242,17 @@
                 left = 0;
             }
             
-            picker.setAttribute('style', 'top: '+ y_pos +'px; left: '+ left +'px;');
+            // mobile? show it centered
+            if(window.innerWidth < 700) {
+                left = Math.floor( (window.innerWidth - picker_w) / 2);    
+            }
+            
+            // top or bottom ?   
+            const y_pos_css = (y_pos + picker_h - document.documentElement.scrollTop < window.innerHeight) ? 
+                    'top:'+ y_pos : 
+                    'transform: translate3d(0, calc((100% + '+ (active_trigger.offsetHeight + 10) +'px) * -1), 0); top:'+ y_pos; 
+
+            picker.setAttribute('style', y_pos_css +'px; left: '+ left +'px;');  
             picker.classList.add('lcep-shown');
         };
         
@@ -317,15 +330,13 @@
                 <div>%pickerContainer%</div>
             </div>`;
 
-            let categories      = '<ul>%categories%</ul>';
-            let categoriesInner = ``;
-            let outerUl         = `<div class="lcep-all-categories">%outerUL%</div>`;
-            let innerLists      = ``;
-
-            let index = 0;
-
-            // Loop through emoji object
-            let object = emoji_json;
+            let categories      = '<ul>%categories%</ul>',
+                categoriesInner = ``,
+                outerUl         = `<div class="lcep-all-categories">%outerUL%</div>`,
+                innerLists      = ``,
+                
+                index           = 0,
+                object          = emoji_json; // Loop through emoji object
 
             for (const key in object) {
                 if (object.hasOwnProperty(key)) {
@@ -359,8 +370,8 @@
                 }
             }
             
-            let allSmiles = outerUl.replace('%outerUL%', innerLists);
-            let cats = categories.replace('%categories%', categoriesInner);
+            let allSmiles   = outerUl.replace('%outerUL%', innerLists),
+                cats        = categories.replace('%categories%', categoriesInner);
 
             picker = picker.replace('%pickerContainer%', allSmiles).replace('%categories%', cats);
             document.body.insertAdjacentHTML('beforeend', picker);
@@ -392,204 +403,204 @@
         
         /* creates inline CSS into the page */
         this.generate_style = function() {        
-            document.head.insertAdjacentHTML('beforeend', `
-                <style>
-                .lcep-el-wrap {
-                    position: relative;
-                }
-                .lcep-el-wrap > textarea,
-                .lcep-el-wrap > input {
-                    padding-right: ${options.target_r_padding}px;
-                }
-                .lcep-trigger {
-                    display: inline-block;
-                    position: absolute;
-                    width: 22px;
-                    height: 22px;
-                    cursor: pointer;
-                }
-                .lcep-trigger svg {
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 50%;
-                    border: 2px solid transparent;
-                    opacity: 0.8;
-                    fill: #282828;
-                    transition: all .15s ease;
-                }
-                .lcep-trigger svg:hover {
-                    fill: #202020;
-                }
-                #lc-emoji-picker,
-                #lc-emoji-picker * {
-                    box-sizing: border-box;
-                }
-                #lc-emoji-picker {
-                    visibility: hidden;
-                    z-index: -100;
-                    opacity: 0;
-                    position: absolute;
-                    top: -9999px;
-                    z-index: 999;
-                    width: 280px;
-                    min-height: 320px;
-                    background: #fff;
-                    box-shadow: 0px 2px 13px -2px rgba(0, 0, 0, 0.18);
-                    border-radius: 6px;
-                    overflow: hidden;
-                    border: 1px solid #ccc;
-                    transform: scale(0.85);
-                    transition: opacity .2s ease, transform .2s ease;
-                }
-                #lc-emoji-picker.lcep-shown {
-                    visibility: visible;
-                    z-index: 999;
-                    transform: none;
-                    opacity: 1;
+            document.head.insertAdjacentHTML('beforeend', 
+`<style>
+.lcep-el-wrap {
+    position: relative;
+}
+.lcep-el-wrap > textarea,
+.lcep-el-wrap > input {
+    padding-right: ${options.target_r_padding}px;
+}
+.lcep-trigger {
+    display: inline-block;
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    cursor: pointer;
+}
+.lcep-trigger svg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    opacity: 0.8;
+    fill: #282828;
+    transition: all .15s ease;
+}
+.lcep-trigger svg:hover {
+    fill: #202020;
+}
+#lc-emoji-picker,
+#lc-emoji-picker * {
+    box-sizing: border-box;
+}
+#lc-emoji-picker {
+    visibility: hidden;
+    z-index: -100;
+    opacity: 0;
+    position: absolute;
+    top: -9999px;
+    z-index: 999;
+    width: 280px;
+    min-height: 320px;
+    background: #fff;
+    box-shadow: 0px 2px 13px -2px rgba(0, 0, 0, 0.18);
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #ccc;
+    transform: scale(0.85);
+    transition: opacity .2s ease, transform .2s ease;
+}
+#lc-emoji-picker.lcep-shown {
+    visibility: visible;
+    z-index: 999;
+    transform: none;
+    opacity: 1;
 
-                }
-                #lc-emoji-picker .lcep-all-categories {
-                    height: 260px;
-                    overflow-y: auto;
-                    padding: 0 5px 20px 10px;
-                }
-                #lc-emoji-picker .lcep-category:not(:first-child) {
-                    margin-top: 22px;
-                }
-                #lc-emoji-picker .lcep-container-title {
-                    color: black;
-                    margin: 10px 0;
-                    text-indent: 10px;
-                    font-size: 13px;
-                    font-weight: bold;
-                }
-                #lc-emoji-picker * {
-                    margin: 0;
-                    padding: 0;
-                    text-decoration: none;
-                    color: #666;
-                    font-family: sans-serif;
-                    user-select: none;
-                    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
-                }
-                .lcep ul {
-                    list-style: none;
-                    margin: 0;
-                    padding: 0;
-                }
-                .lcep-grid {
-                    display: flex;
-                    flex-wrap: wrap;
-                }
-                .lcep-grid > li {
-                    cursor: pointer;
-                    flex: 0 0 calc(100% / 6);
-                    max-width: calc(100% / 6);
-                    height: 41px;
-                    min-width: 0;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    background: #fff;
-                    border-radius: 2px;
-                    transition: all .2s ease;
-                }
-                .lcep-grid > li:hover {
-                    background: #99c9ef;
-                }
-                .lcep-grid > li > a {
-                    display: block;
-                    font-size: 21px;
-                    margin: 0;
-                    padding: 22px 0px;
-                    line-height: 0;
-                }
-                .lcep-categories ul {
-                    display: flex;
-                    flex-wrap: wrap;
-                    list-style: none;
-                }
-                .lcep-categories li {
-                    transition: all .3s ease;
-                    flex: 0 0 calc(100% / 7);
-                    display: flex;
-                    max-width: calc(100% / 7);
-                }
-                .lcep-categories li.lcep-active {
-                    box-shadow: 0 -3px 0 #48a6f0 inset;
-                }
-                .lcep-categories a {
-                    padding: 7px !important;
-                    font-size: 19px;
-                    height: 42px;
-                    display: flex;
-                    text-align: center;
-                    justify-content: center;
-                    align-items: center;
-                    position: relative;
-                    filter: grayscale(100%) contrast(150%);
-                }
-                .lcep-categories a:before {
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: rgba(255, 255, 255, .2);
-                    cursor: pointer;
-                    transition: background .25s ease;
-                }
-                .lcep-categories li:not(.lcep-active):hover a:before {
-                    background: rgba(255, 255, 255, .4);
-                }
-                .lcep-search {
-                    position: relative;
-                    border-top: 1px solid #ddd;
-                    padding: 10px 6px !important;
-                }
-                .lcep-search input {
-                    width: 100%;
-                    border: none;
-                    padding: 8px 30px 8px 10px !important;
-                    outline: none;
-                    background: #fff;
-                    font-size: 13px;
-                    color: #616161;
-                    border: 2px solid #ddd;
-                    height: 30px;
-                    border-radius: 25px; 
-                    user-select: auto !important;
-                }
-                .lcep-search svg,
-                .lcep-search i {
-                    width: 14px;
-                    height: 14px;
-                    position: absolute;
-                    right: 16px;
-                    top: 18px;
-                    fill: #444;
-                    cursor: pointer;
-                }
-                .lcep-search i {
-                    color: #444;
-                    font-size: 22px;
-                    font-family: arial;
-                    line-height: 14px;
-                    transition: opacity .15s ease;
-                }
-                .lcep-search i:hover {
-                    opacity: .8;
-                }
-                .lcep-searching svg,
-                .lcep-search:not(.lcep-searching) i {
-                    display: none;
-                }
-                #lc-emoji-picker img.emoji {
-                    min-width: 23px;
-                    height: auto !important;
-                }
-            </style>`);
+}
+#lc-emoji-picker .lcep-all-categories {
+    height: 260px;
+    overflow-y: auto;
+    padding: 0 5px 20px 10px;
+}
+#lc-emoji-picker .lcep-category:not(:first-child) {
+    margin-top: 22px;
+}
+#lc-emoji-picker .lcep-container-title {
+    color: black;
+    margin: 10px 0;
+    text-indent: 10px;
+    font-size: 13px;
+    font-weight: bold;
+}
+#lc-emoji-picker * {
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+    color: #666;
+    font-family: sans-serif;
+    user-select: none;
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+}
+.lcep ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.lcep-grid {
+    display: flex;
+    flex-wrap: wrap;
+}
+.lcep-grid > li {
+    cursor: pointer;
+    flex: 0 0 calc(100% / 6);
+    max-width: calc(100% / 6);
+    height: 41px;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fff;
+    border-radius: 2px;
+    transition: all .2s ease;
+}
+.lcep-grid > li:hover {
+    background: #99c9ef;
+}
+.lcep-grid > li > a {
+    display: block;
+    font-size: 21px;
+    margin: 0;
+    padding: 22px 0px;
+    line-height: 0;
+}
+.lcep-categories ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+}
+.lcep-categories li {
+    transition: all .3s ease;
+    flex: 0 0 calc(100% / 7);
+    display: flex;
+    max-width: calc(100% / 7);
+}
+.lcep-categories li.lcep-active {
+    box-shadow: 0 -3px 0 #48a6f0 inset;
+}
+.lcep-categories a {
+    padding: 7px !important;
+    font-size: 19px;
+    height: 42px;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    filter: grayscale(100%) contrast(150%);
+}
+.lcep-categories a:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, .2);
+    cursor: pointer;
+    transition: background .25s ease;
+}
+.lcep-categories li:not(.lcep-active):hover a:before {
+    background: rgba(255, 255, 255, .4);
+}
+.lcep-search {
+    position: relative;
+    border-top: 1px solid #ddd;
+    padding: 10px 6px !important;
+}
+.lcep-search input {
+    width: 100%;
+    border: none;
+    padding: 8px 30px 8px 10px !important;
+    outline: none;
+    background: #fff;
+    font-size: 13px;
+    color: #616161;
+    border: 2px solid #ddd;
+    height: 30px;
+    border-radius: 25px; 
+    user-select: auto !important;
+}
+.lcep-search svg,
+.lcep-search i {
+    width: 14px;
+    height: 14px;
+    position: absolute;
+    right: 16px;
+    top: 18px;
+    fill: #444;
+    cursor: pointer;
+}
+.lcep-search i {
+    color: #444;
+    font-size: 22px;
+    font-family: arial;
+    line-height: 14px;
+    transition: opacity .15s ease;
+}
+.lcep-search i:hover {
+    opacity: .8;
+}
+.lcep-searching svg,
+.lcep-search:not(.lcep-searching) i {
+    display: none;
+}
+#lc-emoji-picker img.emoji {
+    min-width: 23px;
+    height: auto !important;
+}
+</style>`);
         };
         
 
