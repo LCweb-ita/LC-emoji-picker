@@ -1,0 +1,23 @@
+{
+  "name": "lc-emoji-picker",
+  "description": "Vanilla javascript emoji picker seamlessly attachable to text inputs and textareas",
+  "main": [
+  	"lc_emoji_picker.min.js",
+      "emoji-list.min.json",
+  ],
+  "keywords": [
+    "javascript",
+    "emoji-picker",
+    "vanilla-javascript",
+    "emoji",
+    "javascript-plugin",
+    "emojis",
+  ],
+  "authors": [
+    "Luca Montanari (https://lcweb.it)"
+  ],
+  "license": "MIT",
+  "homepage": "https://lcweb.it/lc-emoji-picker-javascript-plugin",
+  "dependencies": {},
+  "ignore": []
+}
