@@ -1,6 +1,6 @@
 /**
  * lc_emoji_picker.js - Fancy emoji picker for text inputs and textareas
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Luca Montanari aka LCweb
  * Website: https://lcweb.it
  * Licensed under the MIT license
@@ -283,15 +283,14 @@
             });
             
             let div = document.createElement('div');
+            
+            div.classList.add("lcep-el-wrap");
             div.innerHTML = 
                 '<span id="'+ uniqid +'" class="lcep-trigger" style="'+ trigger_css +'" title="insert emoji">'+ 
-                options.picker_trigger +'</span>' + el.outerHTML;
+                options.picker_trigger +'</span>';
             
-            div.getElementsByTagName( el.tagName )[0].value = el.value; // keep values that might have been changed before init
-            div.classList.add("lcep-el-wrap");
-
             el.parentNode.insertBefore(div, el);
-            el.remove();
+            div.appendChild(el);
             
             // event to show picker
             const trigger = document.getElementById(uniqid);

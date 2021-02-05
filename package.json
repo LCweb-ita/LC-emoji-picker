@@ -1,0 +1,48 @@
+{
+  "author": "LCweb",
+  "name": "LC emoji picker",
+  "version": "1.0.4",
+  "description": "Vanilla javascript emoji picker seamlessly attachable to text inputs and textareas",
+  "keywords": [
+    "javascript",
+    "emoji-picker",
+    "vanilla-javascript",
+    "emoji",
+    "javascript-plugin",
+    "emojis",
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LCweb-ita/LC-emoji-picker.git"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "contributors": [
+    {
+      "name": "LCweb-ita",
+      "url": "https://github.com/LCweb-ita"
+    },
+  ],
+  "license": "MIT",
+  "homepage": "https://lcweb.it/lc-emoji-picker-javascript-plugin",
+  "bugs": "https://github.com/LCweb-ita/LC-emoji-picker/issues",
+  "_extra": {
+    "title": "LC color picker",
+    "license": {
+      "type": "MIT",
+      "url": "https://github.com/LCweb-ita/LC-emoji-picker/blob/main/LICENSE"
+    },
+    "links": {
+      "download": "https://github.com/LCweb-ita/LC-emoji-picker/releases",
+      "docs": "https://github.com/LCweb-ita/LC-emoji-picker"
+    },
+    "main": [
+      "lc_emoji_picker.min.js",
+      "emoji-list.min.json",
+    ],
+    "files": [
+      "lc_emoji_picker.min.js",
+      "emoji-list.min.json",
+    ]
+  }
+}
